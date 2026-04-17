@@ -24,7 +24,6 @@ https://youtube-views.streamlit.app/
 
 🛠️ How to Run Locally
 
-```bash
 # 1. Clone the repository
 git clone https://github.com/Fassika/youtube-views-dashboard.git
 cd youtube-views-dashboard
@@ -75,3 +74,4 @@ Free to use and modify. Feel free to fork and customize!
 
 Made with ❤️ for Ethiopian music creators & fans
 If you like this dashboard, feel free to star the repo ⭐ and share it!
+
