@@ -60,3 +60,18 @@ New music video releases
 Multiple tracks from the same artist
 Live streams + VODs together
 Competitor videos
+
+🌐 Deployed on Streamlit Community Cloud
+This app is deployed for free on Streamlit Community Cloud> https://youtube-views.streamlit.app/
+
+🔧 Tech Stack
+
+Frontend: Streamlit + Plotly + Custom CSS
+Data: yt-dlp (real-time YouTube scraping)
+Deployment: Streamlit Community Cloud (free)
+
+📝 License
+Free to use and modify. Feel free to fork and customize!
+
+Made with ❤️ for Ethiopian music creators & fans
+If you like this dashboard, feel free to star the repo ⭐ and share it!
