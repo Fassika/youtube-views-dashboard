@@ -3,6 +3,7 @@ import yt_dlp
 import pandas as pd
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 import re
 from urllib.parse import urlparse, parse_qs
 
@@ -180,16 +181,20 @@ for vid in st.session_state.video_order:
 # ====================== TOTAL COUNT ======================
 total_views = sum(item["views"] for item in current_data.values()) if current_data else 0
 
+now = datetime.now(ZoneInfo("UTC"))   # ← UTC time
+
 st.markdown(f"""
 <div style="text-align:center; margin-bottom:30px;">
     <h2 style="color:#e2e8f0; margin-bottom:8px;">TOTAL VIEWS ACROSS ALL VIDEOS</h2>
     <h1 class="big-number">{total_views:,}</h1>
     <span class="live-badge">LIVE UPDATING</span>
     <p style="color:#64748b; margin-top:12px; font-size:1.1rem;">
-        Tracking <strong>{len(current_data)}</strong> videos • Last checked: {now.strftime("%b %d, %I:%M %p")}
+        Tracking <strong>{len(current_data)}</strong> videos • 
+        Last checked: {now.strftime("%b %d, %I:%M %p")} <strong>UTC</strong>
     </p>
 </div>
 """, unsafe_allow_html=True)
+
 
 # ====================== TABS: Overview + Individual Videos ======================
 tab_titles = ["🌐 Overview"] + [st.session_state.videos[vid]["title"][:32] + "..." for vid in st.session_state.video_order]
@@ -219,7 +224,7 @@ with tabs[0]:
         
         fig.update_layout(
             title="",
-            xaxis_title="",
+            xaxis_title="Time (UTC)",                    # ← Simple & safe way
             yaxis_title="Total Views",
             template="plotly_dark",
             height=560,
@@ -228,7 +233,10 @@ with tabs[0]:
             paper_bgcolor="#111827",
             font=dict(family="Inter, sans-serif", size=14, color="#e2e8f0"),
             yaxis=dict(tickformat=",d", gridcolor="#334155"),
-            xaxis=dict(gridcolor="#334155", tickformat="%I:%M %p"),
+            xaxis=dict(
+                gridcolor="#334155",
+                tickformat="%I:%M %p"
+            ),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
         
@@ -254,7 +262,9 @@ for idx, vid in enumerate(st.session_state.video_order, start=1):
         data = st.session_state.videos[vid]
         latest = data["history"][-1]["views"] if data["history"] else 0
         
-        # Single-video header (same sleek style as original)
+        # Single-video header 
+        now = datetime.now(ZoneInfo("UTC"))
+        
         st.markdown(f"""
         <div style="text-align:center; margin-bottom:20px;">
             <div style="display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:16px;">
@@ -264,10 +274,11 @@ for idx, vid in enumerate(st.session_state.video_order, start=1):
             <h1 class="big-number">{latest:,}</h1>
             <span class="live-badge">LIVE UPDATING</span>
             <p style="color:#64748b; margin-top:12px;">
-                by <strong>{data['channel']}</strong> • Last checked: {now.strftime("%b %d, %I:%M %p")}
+                by <strong>{data['channel']}</strong> •Last checked: {now.strftime("%b %d, %I:%M %p")} <strong>UTC</strong>
             </p>
         </div>
         """, unsafe_allow_html=True)
+        
         
         # Individual chart
         if len(data["history"]) >= 2:
@@ -286,7 +297,7 @@ for idx, vid in enumerate(st.session_state.video_order, start=1):
             ))
             fig.update_layout(
                 title="View Count Growth • Last 24 Hours",
-                xaxis_title="",
+                xaxis_title="Time (UTC)",                    
                 yaxis_title="Total Views",
                 template="plotly_dark",
                 height=460,
@@ -295,8 +306,14 @@ for idx, vid in enumerate(st.session_state.video_order, start=1):
                 paper_bgcolor="#111827",
                 font=dict(family="Inter, sans-serif", size=14),
                 yaxis=dict(tickformat=",d", gridcolor="#334155"),
-                xaxis=dict(gridcolor="#334155", tickformat="%I:%M %p")
+                xaxis=dict(
+                    gridcolor="#334155",
+                    tickformat="%I:%M %p"
+                )
             )
+            
+                        
+            
             st.plotly_chart(fig, use_container_width=True)
         else:
             st.info("Waiting for more data points...")
